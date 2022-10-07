@@ -8,13 +8,38 @@ from products.models import Product
 from products.serializers import ProductSerializer
 
 # Create your views here.
-@api_view(['GET'])
+@api_view(['POST'])
 def api_home(request, *args, **kwargs):
     """
     DRF View
     """
-    instance = Product.objects.all().last()
-    data = {}
-    if instance:
-        data = ProductSerializer(instance).data
-    return Response(data)
+    try:
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            print(instance)
+            return Response(
+                {
+                    "stautus": "success",
+                    "message": "Product created successfully",
+                    "data": serializer.data,
+                },
+                status=201
+            )
+        return Response(
+            {
+                "stautus": "failure",
+                "message": serializer.errors,
+                "data": None,
+            },
+            status=400
+        )
+    except Exception as e:
+        return Response(
+            {
+                "stautus": "failure",
+                "message": str(e),
+                "data": None,
+            },
+            status=500
+        )
