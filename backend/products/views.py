@@ -54,7 +54,7 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     
 
 
-class ProductCreateAPIView(generics.CreateAPIView):
+class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -67,6 +67,7 @@ class ProductCreateAPIView(generics.CreateAPIView):
         if content is None:
             content = title
         serializer.save(content=content)
+
 
 
 
