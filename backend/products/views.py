@@ -68,6 +68,24 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         serializer.save(content=content)
 
 
+class ProductUpdateAPIView(generics.UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def perform_update(self, serializer):
+        title = serializer.validated_data.get('title')
+        content = serializer.validated_data.get('content') or None 
+        # print(title, content)
+        if content is None:
+            content = title
+        serializer.save(content=content)
+
+
+class ProductDeleteAPIView(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
 @api_view(['GET','POST'])
 def product_alt_view(request, pk=None, *args, **kwargs):
     method = request.method 
