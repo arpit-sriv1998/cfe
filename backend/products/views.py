@@ -4,7 +4,7 @@ from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, mixins
 
 from products.models import Product
 from products.serializers import ProductSerializer
@@ -86,6 +86,8 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
     serializer_class = ProductSerializer
 
 
+
+
 @api_view(['GET','POST'])
 def product_alt_view(request, pk=None, *args, **kwargs):
     method = request.method 
@@ -110,6 +112,38 @@ def product_alt_view(request, pk=None, *args, **kwargs):
             print(serializer.data)
             return Response(serializer.data)
         return Response({'invalid': 'not good data'}, status=400)
+
+
+
+
+
+class ProductMixinView(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    generics.GenericAPIView
+    ):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+
+    def get(self, request, *args, **kwargs):
+        print(args, kwargs)
+        pk = kwargs.get('pk')
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+    def perform_create(self, serializer):
+            title = serializer.validated_data.get('title')
+            content = serializer.validated_data.get('content') or None 
+            # print(title, content)
+            if content is None:
+                content = title
+            serializer.save(content=content)
 
 
 
