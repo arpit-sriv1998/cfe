@@ -8,6 +8,7 @@ from rest_framework import generics, mixins, permissions, authentication
 
 from products.models import Product
 from products.serializers import ProductSerializer
+from .permissions import IsStaffEditorPermission
 
 # Create your views here.
 # @api_view(['POST'])
@@ -59,7 +60,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
     # print(serializer_class)
     def perform_create(self, serializer):
         title = serializer.validated_data.get('title')
