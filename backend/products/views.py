@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework import generics, mixins, permissions, authentication
 
 from api.authentication import TokenAuthentication
-
 from products.models import Product
 from products.serializers import ProductSerializer
-from .permissions import IsStaffEditorPermission
+from api.permissions import IsStaffEditorPermission
+from api.mixins import StaffEditorPermissionMixin
 
 # Create your views here.
 # @api_view(['POST'])
@@ -58,14 +58,14 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     
 
 
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView( StaffEditorPermissionMixin, generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     # authentication_classes = [
     #     authentication.SessionAuthentication,
     #     TokenAuthentication
     #     ]
-    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
+    # permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
     # print(serializer_class)
     def perform_create(self, serializer):
         title = serializer.validated_data.get('title')
@@ -76,10 +76,10 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         serializer.save(content=content)
 
 
-class ProductUpdateAPIView(generics.UpdateAPIView):
+class ProductUpdateAPIView(StaffEditorPermissionMixin, generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
+    # permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
     def perform_update(self, serializer):
         title = serializer.validated_data.get('title')
         content = serializer.validated_data.get('content') or None 
@@ -89,10 +89,10 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
         serializer.save(content=content)
 
 
-class ProductDeleteAPIView(generics.DestroyAPIView):
+class ProductDeleteAPIView(StaffEditorPermissionMixin, generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
+    # permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
     
 
 
