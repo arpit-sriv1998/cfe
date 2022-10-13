@@ -61,10 +61,10 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        TokenAuthentication
-        ]
+    # authentication_classes = [
+    #     authentication.SessionAuthentication,
+    #     TokenAuthentication
+    #     ]
     permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
     # print(serializer_class)
     def perform_create(self, serializer):
@@ -79,7 +79,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 class ProductUpdateAPIView(generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
+    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
     def perform_update(self, serializer):
         title = serializer.validated_data.get('title')
         content = serializer.validated_data.get('content') or None 
@@ -92,6 +92,8 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
 class ProductDeleteAPIView(generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAdminUser ,IsStaffEditorPermission]
+    
 
 
 
