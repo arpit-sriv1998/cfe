@@ -13,12 +13,14 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name='product-detail',
         lookup_field='pk'
     )
+    email = serializers.EmailField(write_only=True)
 
     class Meta:
         model = Product
         fields = [
             'url',
             'edit_url',
+            'email',
             'pk',
             'title',
             'content',
@@ -26,6 +28,16 @@ class ProductSerializer(serializers.ModelSerializer):
             'sale_price',
             'my_discount',
         ]
+    
+    def create(self, validated_data):
+        # email = validated_data.pop('email')
+        obj = super().create(validated_data)
+        # print(email, obj)
+        return obj
+    
+    def update(self, instance, validated_data):
+        email = validated_data.pop('email')
+        return super().update(instance, validated_data)
     
     def get_edit_url(self, obj):
         request = self.context.get('request')
